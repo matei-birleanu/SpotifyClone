@@ -18,6 +18,7 @@ public final class LikedContentPage implements Page {
      * The Followed playlists.
      */
     private List<Playlist> followedPlaylists;
+    private List<Song> recommendedSongs;
 
     /**
      * Instantiates a new Liked content page.
@@ -27,6 +28,7 @@ public final class LikedContentPage implements Page {
     public LikedContentPage(final User user) {
         likedSongs = user.getLikedSongs();
         followedPlaylists = user.getFollowedPlaylists();
+        recommendedSongs = user.getRecommendedSong();
     }
 
     @Override

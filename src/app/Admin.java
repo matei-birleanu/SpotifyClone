@@ -808,7 +808,24 @@ public  class Admin {
 
         return user.getCurrentPage().printCurrentPage();
     }
-
+    public HashMap<String,Integer> updateHashMap(Song song, HashMap<String,Integer> hashMap){
+        if(hashMap.containsKey(song.getGenre())){
+            int a = hashMap.get(song.getGenre());
+            a++;
+            hashMap.put(song.getGenre(),a);
+        }
+        else {
+            hashMap.put(song.getGenre(),1);
+        }
+        return hashMap;
+    }
+    public boolean existsEnd(){
+        for(Artist artist : artists){
+            if(artist.isPlayed())
+                return true;
+        }
+        return false;
+    }
     /**
      * Switch status string.
      *
@@ -907,6 +924,16 @@ public  class Admin {
         //System.out.println(includableArtists.toString());
         return includableArtists;
     }
+    public void calculateRevenue(ArrayList<Artist> list){
+        for(Artist artist : list){
+            double a = artist.getMerchRevenue();
+            for(Merchandise merch : artist.getMerch()){
+                a = a + (double) merch.getBuyers() * merch.getPrice();
+            }
+            //System.out.println(a + " " + artist.getUsername());
+            artist.setMerchRevenue(a);
+        }
+    }
     /**
      * Gets top 5 songs.
      *
@@ -963,5 +990,14 @@ public  class Admin {
             }
         }
         return null;
+    }
+    public ArrayList<Song> searchAllGenre(String genre){
+        ArrayList<Song> list = new ArrayList<>();
+        for(Song song : songs){
+            if(song.getGenre().equals(genre)){
+                list.add(song);
+            }
+        }
+        return list;
     }
 }

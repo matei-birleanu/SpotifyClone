@@ -62,6 +62,12 @@ public final class User extends UserAbstract {
     private ArrayList<Notification> notificationList = new ArrayList<>();
     @Getter
     private ArrayList<String> merch = new ArrayList<>();
+    @Getter
+    @Setter
+    private List<Song> recommendedSong = new ArrayList<>();
+    @Getter
+    @Setter
+    private List<Playlist> recommendedPlaylist = new ArrayList<>();
 
     /**
      * Instantiates a new User.
@@ -83,6 +89,12 @@ public final class User extends UserAbstract {
         homePage = new HomePage(this);
         currentPage = homePage;
         likedContentPage = new LikedContentPage(this);
+    }
+    public void addRecommnedePlaylist(Playlist playlist){
+        recommendedPlaylist.add(playlist);
+    }
+    public void addRecommendedSong(Song song){
+        recommendedSong.add(song);
     }
     public void addMerch(String name){
         merch.add(name);

@@ -24,9 +24,19 @@ public final class CommandInput {
     private ArrayList<SongInput> songs;
     private Integer releaseYear;
     private String nextPage;
+    private String recommendationType;
 
     public CommandInput() {
     }
+
+    public String getRecommendationType() {
+        return recommendationType;
+    }
+
+    public void setRecommendationType(String recommendationType) {
+        this.recommendationType = recommendationType;
+    }
+
     public String getType() {
         return type;
     }

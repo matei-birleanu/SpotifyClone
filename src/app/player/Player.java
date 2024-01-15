@@ -195,7 +195,7 @@ public final class Player {
                     String name = getArtist(source.getAudioFile().getName());
                     Artist artist = Admin.getInstance().getArtist(name);
                     user.updateStatsSong(source.getAudioFile());
-                    System.out.println("am inreg pt din album1" + source.getAudioFile().getName());
+                    //System.out.println("am inreg pt din album1" + source.getAudioFile().getName());
                     Album album = Admin.getInstance().getAlbum(source.getAudioCollection().getName());
                     user.updateStatsAlbum(album);
                     artist.updateListens(getCurrentAudioFile().getName(),user.getUsername());
@@ -205,7 +205,7 @@ public final class Player {
                     Song song = Admin.getInstance().getSong(source.getAudioFile().getName());
                     Album album = Admin.getInstance().getAlbum(song.getAlbum());
                     user.updateStatsSong(song);
-                    System.out.println("am inreg pt din song1" + song.getName());
+                    //System.out.println("am inreg pt din song1" + song.getName());
                     user.updateStatsAlbum(album);
                     Artist artist = Admin.getInstance().getArtist(song.getArtist());
                     artist.updateListens(source.getAudioFile().getName(), user.getUsername());
@@ -223,7 +223,7 @@ public final class Player {
                     String name = getArtist(source.getAudioFile().getName());
                     Artist artist = Admin.getInstance().getArtist(name);
                     user.updateStatsSong(source.getAudioFile());
-                    System.out.println("am inreg pt din album2" + source.getAudioFile().getName());
+                    //System.out.println("am inreg pt din album2" + source.getAudioFile().getName());
                     Album album = Admin.getInstance().getAlbum(source.getAudioCollection().getName());
                     user.updateStatsAlbum(album);
                     artist.updateListens(getCurrentAudioFile().getName(),user.getUsername());
@@ -232,7 +232,7 @@ public final class Player {
                     Song song = Admin.getInstance().getSong(source.getAudioFile().getName());
                     Album album = Admin.getInstance().getAlbum(song.getAlbum());
                     user.updateStatsSong(song);
-                    System.out.println("am inreg pt din song2" + song.getName());
+                    //System.out.println("am inreg pt din song2" + song.getName());
                     user.updateStatsAlbum(album);
                     Artist artist = Admin.getInstance().getArtist(song.getArtist());
                     artist.updateListens(source.getAudioFile().getName(), user.getUsername());

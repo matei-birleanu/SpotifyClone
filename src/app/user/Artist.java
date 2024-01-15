@@ -29,7 +29,10 @@ public final class Artist extends ContentCreator {
     private int sales;
     @Getter
     @Setter
-    private int merchRevenue = 0;
+    private double merchRevenue = 0;
+    @Getter
+    @Setter
+    private boolean played = false;
 
     /**
      * Instantiates a new Artist.
