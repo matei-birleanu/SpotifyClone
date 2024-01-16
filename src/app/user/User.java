@@ -12,6 +12,7 @@ import app.pages.LikedContentPage;
 import app.pages.Notification;
 import app.pages.Page;
 import app.player.Player;
+import app.player.PlayerSource;
 import app.player.PlayerStats;
 import app.searchBar.Filters;
 import app.searchBar.SearchBar;
@@ -26,7 +27,7 @@ import java.util.List;
 /**
  * The type User.
  */
-public final class User extends UserAbstract {
+public final class User extends UserAbstract implements UserObservable {
     @Getter
     private ArrayList<Playlist> playlists;
     @Getter
@@ -68,6 +69,7 @@ public final class User extends UserAbstract {
     @Getter
     @Setter
     private List<Playlist> recommendedPlaylist = new ArrayList<>();
+    private List<UserObserver> observers = new ArrayList<>();
 
     /**
      * Instantiates a new User.
@@ -215,6 +217,10 @@ public final class User extends UserAbstract {
         }
         player.setOwnerPlayer(getUsername());
         player.setSource(searchBar.getLastSelected(), searchBar.getLastSearchType());
+        PlayerSource source = getPlayer().getSource();
+//        if(source != null) {
+//            System.out.println(source.getAudioFile().getName() + " din load");
+//        }
         searchBar.clearSelection();
 
         player.pause();
@@ -628,6 +634,7 @@ public final class User extends UserAbstract {
      */
     public void switchStatus() {
         status = !status;
+        notifyObservers("User status changed to " + (status ? "online" : "offline"));
     }
 
     /**
@@ -690,6 +697,25 @@ public final class User extends UserAbstract {
         }
         else {
             bestAlbums.put(album.getName(),1);
+        }
+    }
+
+    @Override
+    public void addObserver(UserObserver observer) {
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    @Override
+    public void removeObserver(UserObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String message) {
+        for (UserObserver observer : observers) {
+            observer.update(this, message);
         }
     }
 }

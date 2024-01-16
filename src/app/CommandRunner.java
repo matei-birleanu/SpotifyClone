@@ -2,6 +2,7 @@ package app;
 import app.audio.Files.AudioFile;
 import app.audio.Files.Song;
 import app.player.Player;
+import app.player.PlayerSource;
 import app.user.*;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.CommandInput;
 import org.checkerframework.checker.units.qual.A;
 
+import javax.xml.transform.Source;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -104,6 +106,26 @@ public final class CommandRunner {
               }
           }
         }
+//        String type = user.getPlayer().getType();
+//        PlayerSource source = user.getPlayer().getSource();
+//        if(type.equals("album") && source.getRemainedDuration() > 0){
+//            String name = user.getPlayer().getArtist(source.getAudioFile().getName());
+//            Artist artist = Admin.getInstance().getArtist(name);
+//            user.updateStatsSong(source.getAudioFile());
+//            //System.out.println("am inreg pt din album2" + source.getAudioFile().getName());
+//            Album album = Admin.getInstance().getAlbum(source.getAudioCollection().getName());
+//            user.updateStatsAlbum(album);
+//            artist.updateListens(user.getPlayer().getCurrentAudioFile().getName(),user.getUsername());
+//        }
+//        if(type.equals("song") && source.getRemainedDuration() > 0){
+//            Song song = Admin.getInstance().getSong(source.getAudioFile().getName());
+//            Album album = Admin.getInstance().getAlbum(song.getAlbum());
+//            user.updateStatsSong(song);
+//            //System.out.println("am inreg pt din song2" + song.getName());
+//            user.updateStatsAlbum(album);
+//            Artist artist = Admin.getInstance().getArtist(song.getArtist());
+//            artist.updateListens(source.getAudioFile().getName(), user.getUsername());
+//        }
 //        System.out.println("user.getPlayer().getSource() " + user.getPlayer().getSource());
 //        System.out.println("user.getPlayer().getSource().getAudioFile().getName()" + user.getPlayer().getSource().getAudioFile().getName());
         ObjectNode objectNode = objectMapper.createObjectNode();
@@ -796,8 +818,8 @@ public final class CommandRunner {
     }
 
     public static ObjectNode wrapped(final CommandInput commandInput) {
-        System.out.println(commandInput.getTimestamp());
-        Admin.getInstance().updateTimestamp(commandInput.getTimestamp());
+        //System.out.println(commandInput.getTimestamp());
+        //Admin.getInstance().updateTimestamp(commandInput.getTimestamp());
         User user = Admin.getInstance().getUser(commandInput.getUsername());
 //        if(user == null){
 //            Artist artist = Admin.getInstance().getArtist(commandInput.getUsername());

@@ -9,13 +9,7 @@ import app.audio.Files.Episode;
 import app.audio.Files.Song;
 import app.pages.Notification;
 import app.player.Player;
-import app.user.Announcement;
-import app.user.Artist;
-import app.user.Event;
-import app.user.Host;
-import app.user.Merchandise;
-import app.user.User;
-import app.user.UserAbstract;
+import app.user.*;
 import fileio.input.CommandInput;
 import fileio.input.EpisodeInput;
 import fileio.input.PodcastInput;
@@ -223,6 +217,7 @@ public  class Admin {
         } else if (elapsed < 0) {
             throw new IllegalArgumentException("Invalid timestamp" + newTimestamp);
         }
+        System.out.println(newTimestamp);
         users.forEach(user -> user.simulateTime(elapsed));
     }
 
@@ -257,13 +252,21 @@ public  class Admin {
         }
 
         if (type.equals("user")) {
-            users.add(new User(username, age, city));
+            User user = new User(username, age, city);
+            ConcreteUserObserver observer = new ConcreteUserObserver(username);
+            user.addObserver(observer);
+            users.add(user);
         } else if (type.equals("artist")) {
+            Artist artist =  new Artist(username, age, city);
+            ConcreteUserObserver observer = new ConcreteUserObserver(username);
+            artist.addObserver(observer);
             artists.add(new Artist(username, age, city));
         } else {
-            hosts.add(new Host(username, age, city));
+            Host host = new Host(username, age, city);
+            ConcreteUserObserver observer = new ConcreteUserObserver(username);
+            host.addObserver(observer);
+            hosts.add(host);
         }
-
         return "The username %s has been added successfully.".formatted(username);
     }
 

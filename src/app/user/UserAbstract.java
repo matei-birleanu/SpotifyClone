@@ -8,6 +8,7 @@ public abstract class UserAbstract {
     private int age;
     private String city;
 
+
     /**
      * Instantiates a new User abstract.
      *

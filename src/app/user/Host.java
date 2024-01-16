@@ -4,13 +4,15 @@ import app.audio.Collections.Podcast;
 import app.pages.HostPage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The type Host.
  */
-public final class Host extends ContentCreator {
+public final class Host extends ContentCreator implements UserObservable {
     private ArrayList<Podcast> podcasts;
     private ArrayList<Announcement> announcements;
+    private List<UserObserver> observers = new ArrayList<>();
 
     /**
      * Instantiates a new Host.
@@ -98,5 +100,24 @@ public final class Host extends ContentCreator {
     @Override
     public String userType() {
         return "host";
+    }
+
+    @Override
+    public void addObserver(UserObserver observer) {
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    @Override
+    public void removeObserver(UserObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String message) {
+        for (UserObserver observer : observers) {
+            observer.update(this, message);
+        }
     }
 }

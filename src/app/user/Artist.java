@@ -16,7 +16,7 @@ import lombok.Setter;
 /**
  * The type Artist.
  */
-public final class Artist extends ContentCreator {
+public final class Artist extends ContentCreator implements UserObservable {
     private ArrayList<Album> albums;
     private ArrayList<Merchandise> merch;
     private ArrayList<Event> events;
@@ -33,6 +33,7 @@ public final class Artist extends ContentCreator {
     @Getter
     @Setter
     private boolean played = false;
+     List<UserObserver> observers = new ArrayList<>();
 
     /**
      * Instantiates a new Artist.
@@ -207,5 +208,24 @@ public final class Artist extends ContentCreator {
      */
     public String userType() {
         return "artist";
+    }
+
+    @Override
+    public void addObserver(UserObserver observer) {
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    @Override
+    public void removeObserver(UserObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String message) {
+        for (UserObserver observer : observers) {
+            observer.update(this, message);
+        }
     }
 }

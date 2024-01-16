@@ -55,7 +55,7 @@ public final class Main {
             String filepath = CheckerConstants.OUT_PATH + file.getName();
             File out = new File(filepath);
             boolean isCreated = out.createNewFile();
-            if (isCreated && (file.getName().contains("test07") || file.getName().contains("test08")) || file.getName().contains("test09")|| file.getName().contains("test12")|| file.getName().contains("test13") || file.getName().contains("test14")) {
+            if (isCreated && (file.getName().contains("test07") || file.getName().contains("test08")) || file.getName().contains("test09")|| file.getName().contains("test12")|| file.getName().contains("test13") || file.getName().contains("test14") || file.getName().contains("test00")) {
                 action(file.getName(), filepath);
             }
         }
