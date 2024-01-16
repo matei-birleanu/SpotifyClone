@@ -1,26 +1,21 @@
 package app;
+
 import app.audio.Files.AudioFile;
 import app.audio.Files.Song;
-import app.player.Player;
-import app.player.PlayerSource;
+
 import app.user.*;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import app.audio.Collections.*;
-import app.pages.ArtistPage;
 import app.pages.Notification;
 import app.player.PlayerStats;
 import app.searchBar.Filters;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import fileio.input.CommandInput;
-import org.checkerframework.checker.units.qual.A;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import javax.xml.transform.Source;
-import java.lang.reflect.Array;
+
+
 import java.util.*;
 
 /**
@@ -99,37 +94,17 @@ public final class CommandRunner {
     public static ObjectNode load(final CommandInput commandInput) {
         User user = admin.getUser(commandInput.getUsername());
         String message = user.load();
-        AudioFile file = user.getPlayer().getSource().getAudioFile();
-        for(Song song : Admin.getInstance().getSongs()){
-          if(file.getName().equals(song.getName())) {
-              Artist artist = Admin.getInstance().getArtist(song.getArtist());
-              if (artist != null) {
-                  artist.setPlayed(true);
-              }
-          }
+        if(user.getPlayer().getSource() != null) {
+            AudioFile file = user.getPlayer().getSource().getAudioFile();
+            for (Song song : Admin.getInstance().getSongs()) {
+                if (file.getName().equals(song.getName())) {
+                    Artist artist = Admin.getInstance().getArtist(song.getArtist());
+                    if (artist != null) {
+                        artist.setPlayed(true);
+                    }
+                }
+            }
         }
-//        String type = user.getPlayer().getType();
-//        PlayerSource source = user.getPlayer().getSource();
-//        if(type.equals("album") && source.getRemainedDuration() > 0){
-//            String name = user.getPlayer().getArtist(source.getAudioFile().getName());
-//            Artist artist = Admin.getInstance().getArtist(name);
-//            user.updateStatsSong(source.getAudioFile());
-//            //System.out.println("am inreg pt din album2" + source.getAudioFile().getName());
-//            Album album = Admin.getInstance().getAlbum(source.getAudioCollection().getName());
-//            user.updateStatsAlbum(album);
-//            artist.updateListens(user.getPlayer().getCurrentAudioFile().getName(),user.getUsername());
-//        }
-//        if(type.equals("song") && source.getRemainedDuration() > 0){
-//            Song song = Admin.getInstance().getSong(source.getAudioFile().getName());
-//            Album album = Admin.getInstance().getAlbum(song.getAlbum());
-//            user.updateStatsSong(song);
-//            //System.out.println("am inreg pt din song2" + song.getName());
-//            user.updateStatsAlbum(album);
-//            Artist artist = Admin.getInstance().getArtist(song.getArtist());
-//            artist.updateListens(source.getAudioFile().getName(), user.getUsername());
-//        }
-//        System.out.println("user.getPlayer().getSource() " + user.getPlayer().getSource());
-//        System.out.println("user.getPlayer().getSource().getAudioFile().getName()" + user.getPlayer().getSource().getAudioFile().getName());
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("command", commandInput.getCommand());
         objectNode.put("user", commandInput.getUsername());
@@ -818,24 +793,33 @@ public final class CommandRunner {
 
         return objectNode;
     }
+    /**
+     * Processes a wrapped command based on the provided command input.
+     *
+     * @param commandInput The input containing information for the wrapped command.
+     * @return An ObjectNode containing the result of the wrapped command processing.
+     */
 
     public static ObjectNode wrapped(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
-        if(user == null){
-            Artist artist = Admin.getInstance().getArtist(commandInput.getUsername());
+        Artist artist = Admin.getInstance().getArtist(commandInput.getUsername());
+        if (user == null && artist != null) {
             artist.createAlbumStats();
-            List<Map.Entry<String, Integer>> entryListAlbum = new ArrayList<>(artist.getPopularAlbums().entrySet());
+            List<Map.Entry<String, Integer>> entryListAlbum = new ArrayList<>(
+                    artist.getPopularAlbums().entrySet());
             entryListAlbum = Admin.getInstance().sortStats(entryListAlbum);
 
-            List<Map.Entry<String, Integer>> entryListSong = new ArrayList<>(artist.getSongListens().entrySet());
+            List<Map.Entry<String, Integer>> entryListSong = new ArrayList<>(
+                    artist.getSongListens().entrySet());
             entryListSong = Admin.getInstance().sortStats(entryListSong);
 
-            List<Map.Entry<String, Integer>> entryListFans = new ArrayList<>(artist.getFans().entrySet());
+            List<Map.Entry<String, Integer>> entryListFans = new ArrayList<>(
+                    artist.getFans().entrySet());
             entryListFans = Admin.getInstance().sortStats(entryListFans);
             ArrayList<String> topFansList = new ArrayList<>();
             int ok = 0;
-            for (Map.Entry<String, Integer> entry : entryListFans){
-                if(ok == 5){
+            for (Map.Entry<String, Integer> entry : entryListFans) {
+                if (ok == 5) {
                     break;
                 }
                 topFansList.add(entry.getKey());
@@ -857,19 +841,24 @@ public final class CommandRunner {
             return objectNode;
         }
         if (user != null) {
-            List<Map.Entry<String, Integer>> entryList = new ArrayList<>(user.getBestSongs().entrySet());
+            List<Map.Entry<String, Integer>> entryList = new ArrayList<>(
+                    user.getBestSongs().entrySet());
             entryList = Admin.getInstance().sortStats(entryList);
 
-            List<Map.Entry<String, Integer>> entryListGenre = new ArrayList<>(user.getBestGenre().entrySet());
+            List<Map.Entry<String, Integer>> entryListGenre = new ArrayList<>(
+                    user.getBestGenre().entrySet());
             entryListGenre = Admin.getInstance().sortStats(entryListGenre);
 
-            List<Map.Entry<String, Integer>> entryListArtist = new ArrayList<>(user.getBestArtists().entrySet());
+            List<Map.Entry<String, Integer>> entryListArtist = new ArrayList<>(
+                    user.getBestArtists().entrySet());
             entryListArtist = Admin.getInstance().sortStats(entryListArtist);
 
-            List<Map.Entry<String, Integer>> entryListAlbum = new ArrayList<>(user.getBestAlbums().entrySet());
+            List<Map.Entry<String, Integer>> entryListAlbum = new ArrayList<>(
+                    user.getBestAlbums().entrySet());
             entryListAlbum = Admin.getInstance().sortStats(entryListAlbum);
 
-            List<Map.Entry<String, Integer>> entryListEpisode = new ArrayList<>(user.getBestEpisodes().entrySet());
+            List<Map.Entry<String, Integer>> entryListEpisode = new ArrayList<>(
+                    user.getBestEpisodes().entrySet());
             entryListEpisode = Admin.getInstance().sortStats(entryListEpisode);
 
             ObjectNode objectNode = objectMapper.createObjectNode();
@@ -887,22 +876,37 @@ public final class CommandRunner {
         }
         return null;
     }
-
-    private static void addTopEntries(ObjectNode resultNode, String nodeName, List<Map.Entry<String, Integer>> entryList) {
+    /**
+     * Adds top entries to the specified ObjectNode based on the provided entry list.
+     *
+     * @param resultNode The ObjectNode to which top entries will be added.
+     * @param nodeName The name of the node in the ObjectNode where entries will be added.
+     * @param entryList The list of Map entries containing key-value pairs.
+     */
+    private static void addTopEntries(final ObjectNode resultNode,
+                                      final String nodeName,
+                                      final List<Map.Entry<String
+            , Integer>> entryList) {
         ObjectNode node = resultNode.putObject(nodeName);
         int ok = 0;
         for (Map.Entry<String, Integer> entry : entryList) {
-            if(ok == 5) {
+            if (ok == 5) {
                 break;
             }
             node.put(entry.getKey(), entry.getValue());
             ok++;
         }
     }
-
+    /**
+     * Processes a subscription based on the provided command input.
+     *
+     * @param commandInput The input containing information for the subscription operation.
+     * @return An ObjectNode containing the result of the subscription operation.
+     */
     public static ObjectNode subscribe(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
-        if (user.getCurrentPage().display().equals("likedcontent") || user.getCurrentPage().display().equals("home")) {
+        if (user.getCurrentPage().display().equals("likedcontent")
+                || user.getCurrentPage().display().equals("home")) {
             ObjectNode objectNode = objectMapper.createObjectNode();
             objectNode.put("command", commandInput.getCommand());
             objectNode.put("user", commandInput.getUsername());
@@ -931,7 +935,12 @@ public final class CommandRunner {
                 + name + " successfully.");
         return objectNode;
     }
-
+    /**
+     * Retrieves user notifications based on the provided command input.
+     *
+     * @param commandInput The input containing information for retrieving notifications.
+     * @return An ObjectNode containing the user's notifications.
+     */
     public static ObjectNode getNotifications(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
         ArrayList<Notification> notifications = user.getNotificationList();
@@ -950,18 +959,25 @@ public final class CommandRunner {
         user.clearNotifications();
         return objectNode;
     }
-    public static ObjectNode buyMerch(final CommandInput commandInput){
+    /**
+     * Processes a merchandise purchase based on the provided command input.
+     *
+     * @param commandInput The input containing information for the merchandise purchase.
+     * @return An ObjectNode containing the result of the merchandise purchase operation.
+     */
+    public static ObjectNode buyMerch(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
-        if(user.getCurrentPage().display().equals("artist")){
+        if (user.getCurrentPage().display().equals("artist")) {
             String name = user.getCurrentPage().getName();
             Artist artist = Admin.getInstance().getArtist(name);
             Merchandise merch = artist.getAMerch(commandInput.getName());
-            if(merch == null){
+            if (merch == null) {
                 ObjectNode objectNode = objectMapper.createObjectNode();
                 objectNode.put("command", commandInput.getCommand());
                 objectNode.put("user", commandInput.getUsername());
                 objectNode.put("timestamp", commandInput.getTimestamp());
-                objectNode.put("message", "The merch " + commandInput.getName() + " doesn't exist.");
+                objectNode.put("message", "The merch " + commandInput.getName()
+                        + " doesn't exist.");
                 return objectNode;
             }
             int a = merch.getBuyers();
@@ -978,7 +994,13 @@ public final class CommandRunner {
         return null;
 
     }
-    public static ObjectNode seeMerch(final CommandInput commandInput){
+    /**
+     * Retrieves information about merchandise based on the provided command input.
+     *
+     * @param commandInput The input containing information for retrieving merchandise details.
+     * @return An ObjectNode containing information about the requested merchandise.
+     */
+    public static ObjectNode seeMerch(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("command", commandInput.getCommand());
@@ -987,13 +1009,19 @@ public final class CommandRunner {
         objectNode.put("result", objectMapper.valueToTree(user.getMerch()));
         return objectNode;
     }
-    public static ObjectNode updateRecommendations(final CommandInput commandInput){
+    /**
+     * Updates recommendations based on the provided command input.
+     *
+     * @param commandInput The input containing information for updating recommendations.
+     * @return An ObjectNode containing the updated recommendations.
+     */
+    public static ObjectNode updateRecommendations(final CommandInput commandInput) {
         User user = Admin.getInstance().getUser(commandInput.getUsername());
-        if(commandInput.getRecommendationType().equals("random_song")){
+        if (commandInput.getRecommendationType().equals("random_song")) {
             PlayerStats stats = user.getPlayerStats();
-            Song song  = Admin.getInstance().getSong(stats.getName());
+            Song song = Admin.getInstance().getSong(stats.getName());
             int seed = song.getDuration() - stats.getRemainedTime();
-            if(seed < 30){
+            if (seed < 30) {
                 ObjectNode objectNode = objectMapper.createObjectNode();
                 objectNode.put("user", commandInput.getUsername());
                 objectNode.put("command", commandInput.getCommand());
@@ -1014,26 +1042,28 @@ public final class CommandRunner {
             objectNode.put("message", "The recommendations for user " + user.getUsername() + " have been updated successfully.");
             return objectNode;
         }
-        if(commandInput.getRecommendationType().equals("random_playlist")){
-            HashMap<String,Integer> genreMap = new HashMap<>();
-            for(Song song : user.getLikedSongs()){
-                genreMap = Admin.getInstance().updateHashMap(song,genreMap);
+        if (commandInput.getRecommendationType().equals("random_playlist")) {
+            HashMap<String, Integer> genreMap = new HashMap<>();
+            for (Song song : user.getLikedSongs()) {
+                genreMap = Admin.getInstance().updateHashMap(song, genreMap);
             }
-            for(Song song : user.getLikedSongs()){
-                genreMap = Admin.getInstance().updateHashMap(song,genreMap);
+            for (Song song : user.getLikedSongs()) {
+                genreMap = Admin.getInstance().updateHashMap(song, genreMap);
             }
-            for(Playlist playlist : user.getFollowedPlaylists()){
-                for(Song song : playlist.getSongs()){
+            for (Playlist playlist : user.getFollowedPlaylists()) {
+                for (Song song : playlist.getSongs()) {
                     genreMap = Admin.getInstance().updateHashMap(song, genreMap);
                 }
             }
             List<Map.Entry<String, Integer>> topGen = new ArrayList<>(genreMap.entrySet());
             topGen = Admin.getInstance().sortStats(topGen);
-            System.out.println(topGen.size());
             ArrayList<Song> top = new ArrayList<>();
-            top = Admin.getInstance().searchTopSongsGenre(topGen.get(0).getKey());
-            Playlist recomennded = new Playlist(user.getUsername() + "'s recommendations", user.getUsername());
-            for(Song sg : top){
+            if(!topGen.isEmpty()) {
+                top = Admin.getInstance().searchTopSongsGenre(topGen.get(0).getKey());
+            }
+            Playlist recomennded = new Playlist(user.getUsername()
+                    + "'s recommendations", user.getUsername());
+            for (Song sg : top) {
                 recomennded.addSong(sg);
             }
             user.addRecommnedePlaylist(recomennded);
@@ -1041,20 +1071,22 @@ public final class CommandRunner {
             objectNode.put("command", commandInput.getCommand());
             objectNode.put("user", commandInput.getUsername());
             objectNode.put("timestamp", commandInput.getTimestamp());
-            objectNode.put("message", "The recommendations for user " + user.getUsername() + " have been updated successfully.");
+            objectNode.put("message", "The recommendations for user "
+                    + user.getUsername() + " have been updated successfully.");
             return objectNode;
         }
         return null;
     }
+
     public static ObjectNode endProgram() {
         Admin.getInstance().calculateSales();
         ArrayList<Artist> topArtists = Admin.getInstance().getTopSales();
-        System.out.println(topArtists.size());
-        if(!topArtists.isEmpty()){
+
+        if (!topArtists.isEmpty()) {
             Admin.getInstance().calculateRevenue(topArtists);
             ObjectNode objectNode = objectMapper.createObjectNode();
             objectNode.put("command", "endProgram");
-            ObjectNode resultNode = objectNode.putObject("result"); // Use putObject instead of putArray
+            ObjectNode resultNode = objectNode.putObject("result");
 
             int index = 1;
 
@@ -1070,10 +1102,10 @@ public final class CommandRunner {
             }
             return objectNode;
         }
-        if(admin.existsEnd()){
+        if (admin.existsEnd()) {
             ObjectNode objectNode = objectMapper.createObjectNode();
             objectNode.put("command", "endProgram");
-            ObjectNode resultNode = objectNode.putObject("result"); // Use putObject instead of putArray
+            ObjectNode resultNode = objectNode.putObject("result");
 
             int index = 1;
 
@@ -1081,7 +1113,7 @@ public final class CommandRunner {
             copyArtist.addAll(Admin.getInstance().getArtists());
             Collections.sort(copyArtist, Comparator.comparing(Artist::getUsername));
             for (Artist artist : copyArtist) {
-                if(artist.isPlayed()) {
+                if (artist.isPlayed()) {
                     ObjectNode extranode = objectMapper.createObjectNode();
                     extranode.put("merchRevenue", artist.getMerchRevenue());
                     extranode.put("songRevenue", 0.0);

@@ -50,15 +50,15 @@ public final class User extends UserAbstract implements UserObservable {
     @Setter
     private LikedContentPage likedContentPage;
     @Getter
-    private HashMap<String,Integer> bestArtists = new HashMap<>();
+    private HashMap<String, Integer> bestArtists = new HashMap<>();
     @Getter
-    private HashMap<String,Integer> bestGenre = new HashMap<>();
+    private HashMap<String, Integer> bestGenre = new HashMap<>();
     @Getter
-    private HashMap<String,Integer> bestSongs = new HashMap<>();
+    private HashMap<String, Integer> bestSongs = new HashMap<>();
     @Getter
-    private HashMap<String,Integer> bestAlbums = new HashMap<>();
+    private HashMap<String, Integer> bestAlbums = new HashMap<>();
     @Getter
-    private HashMap<String,Integer> bestEpisodes = new HashMap<>();
+    private HashMap<String, Integer> bestEpisodes = new HashMap<>();
     @Getter
     private ArrayList<String> subscribeList = new ArrayList<>();
     @Getter
@@ -94,39 +94,53 @@ public final class User extends UserAbstract implements UserObservable {
         currentPage = homePage;
         likedContentPage = new LikedContentPage(this);
     }
-    public void addRecommnedePlaylist(Playlist playlist){
+    /**
+     * Adds a recommended playlist to the user's list of recommended playlists.
+     *
+     * @param playlist The playlist to be added to the recommended playlists.
+     */
+    public void addRecommnedePlaylist(final Playlist playlist) {
         recommendedPlaylist.add(playlist);
     }
-    public void addPlaylist(Playlist playlist){
+    /**
+     * Adds a playlist to the user's list of playlists.
+     *
+     * @param playlist The playlist to be added to the user's playlists.
+     */
+    public void addPlaylist(final Playlist playlist) {
         playlists.add(playlist);
     }
-    public void addRecommendedSong(Song song){
+    /**
+     * Adds a recommended song to the user's list of recommended songs.
+     *
+     * @param song The song to be added to the recommended songs.
+     */
+    public void addRecommendedSong(final Song song) {
         recommendedSong.add(song);
     }
-    public void addMerch(String name){
+    /**
+     * Adds merchandise to the user's list of owned merchandise.
+     *
+     * @param name The name of the merchandise to be added.
+     */
+    public void addMerch(final String name) {
         merch.add(name);
     }
-    public void addNotification(Notification notification){
+    /**
+     * Adds a notification to the user's notification list.
+     *
+     * @param notification The notification to be added.
+     */
+    public void addNotification(final Notification notification) {
         notificationList.add(notification);
     }
-    public void clearNotifications(){
+    /**
+     * Clears all notifications from the user's notification list.
+     */
+    public void clearNotifications() {
         notificationList.clear();
     }
-    public void setBestAlbums(HashMap<String, Integer> bestAlbums) {
-        this.bestAlbums = bestAlbums;
-    }
 
-    public void setBestSongs(HashMap<String, Integer> bestSongs) {
-        this.bestSongs = bestSongs;
-    }
-
-    public void setBestGenre(HashMap<String, Integer> bestGenre) {
-        this.bestGenre = bestGenre;
-    }
-
-    public void setBestArtists(HashMap<String, Integer> bestArtists) {
-        this.bestArtists = bestArtists;
-    }
 
     @Override
     public String userType() {
@@ -149,7 +163,7 @@ public final class User extends UserAbstract implements UserObservable {
 
         if (type.equals("artist") || type.equals("host")) {
             List<ContentCreator> contentCreatorsEntries =
-            searchBar.searchContentCreator(filters, type);
+                    searchBar.searchContentCreator(filters, type);
 
             for (ContentCreator contentCreator : contentCreatorsEntries) {
                 results.add(contentCreator.getUsername());
@@ -182,7 +196,7 @@ public final class User extends UserAbstract implements UserObservable {
         lastSearched = false;
 
         if (searchBar.getLastSearchType().equals("artist")
-            || searchBar.getLastSearchType().equals("host")) {
+                || searchBar.getLastSearchType().equals("host")) {
             ContentCreator selected = searchBar.selectContentCreator(itemNumber);
 
             if (selected == null) {
@@ -217,15 +231,13 @@ public final class User extends UserAbstract implements UserObservable {
         }
 
         if (!searchBar.getLastSearchType().equals("song")
-            && ((AudioCollection) searchBar.getLastSelected()).getNumberOfTracks() == 0) {
+                && ((AudioCollection) searchBar.getLastSelected()).getNumberOfTracks() == 0) {
             return "You can't load an empty audio collection!";
         }
         player.setOwnerPlayer(getUsername());
         player.setSource(searchBar.getLastSelected(), searchBar.getLastSearchType());
         PlayerSource source = getPlayer().getSource();
-//        if(source != null) {
-//            System.out.println(source.getAudioFile().getName() + " din load");
-//        }
+
         searchBar.clearSelection();
 
         player.pause();
@@ -313,7 +325,7 @@ public final class User extends UserAbstract implements UserObservable {
         }
 
         if (!player.getType().equals("playlist")
-            && !player.getType().equals("album")) {
+                && !player.getType().equals("album")) {
             return "The loaded source is not a playlist or an album.";
         }
 
@@ -386,7 +398,7 @@ public final class User extends UserAbstract implements UserObservable {
         }
 
         if (!player.getType().equals("song") && !player.getType().equals("playlist")
-            && !player.getType().equals("album")) {
+                && !player.getType().equals("album")) {
             return "Loaded source is not a song.";
         }
 
@@ -654,71 +666,91 @@ public final class User extends UserAbstract implements UserObservable {
 
         player.simulatePlayer(time);
     }
-    public void updateStatsArtist(Song song){
-        if(bestArtists.containsKey(song.getArtist())){
+    /**
+     * Updates statistics for the artist associated with a given song.
+     *
+     * @param song The song for which the artist's statistics are being updated.
+     */
+    public void updateStatsArtist(final Song song) {
+        if (bestArtists.containsKey(song.getArtist())) {
             int list = bestArtists.get(song.getArtist());
             list++;
-            bestArtists.put(song.getArtist(),list);
-        }
-        else {
-            bestArtists.put(song.getArtist(),1);
+            bestArtists.put(song.getArtist(), list);
+        } else {
+            bestArtists.put(song.getArtist(), 1);
         }
     }
-    public void updateGenre(Song song){
-        if(bestGenre.containsKey(song.getGenre())){
+    /**
+     * Updates the genre information for a given song.
+     *
+     * @param song The song for which the genre information is being updated.
+     */
+    public void updateGenre(final Song song) {
+        if (bestGenre.containsKey(song.getGenre())) {
             int list = bestGenre.get(song.getGenre());
             list++;
-            bestGenre.put(song.getGenre(),list);
-        }
-        else {
-            bestGenre.put(song.getGenre(),1);
+            bestGenre.put(song.getGenre(), list);
+        } else {
+            bestGenre.put(song.getGenre(), 1);
         }
     }
-    public void updateSongs(Song song){
-        if(bestSongs.containsKey(song.getName())){
+    /**
+     * Updates information for a given song.
+     *
+     * @param song The song for which information is being updated.
+     */
+    public void updateSongs(final Song song) {
+        if (bestSongs.containsKey(song.getName())) {
             int list = bestSongs.get(song.getName());
             list++;
-            bestSongs.put(song.getName(),list);
-        }
-        else {
-            bestSongs.put(song.getName(),1);
+            bestSongs.put(song.getName(), list);
+        } else {
+            bestSongs.put(song.getName(), 1);
         }
     }
-
-    public void updateStatsSong(LibraryEntry file){
-            if(player.getType().equals("song")
-             || player.getType().equals("album")){
-                Song song = (Song) file;
-                updateStatsArtist(song);
-                updateGenre(song);
-                updateSongs(song);
-            }
+    /**
+     * Updates information for a given song.
+     *
+     * @param file The song for which information is being updated.
+     */
+    public void updateStatsSong(final LibraryEntry file) {
+        if (player.getType().equals("song")
+                || player.getType().equals("album")) {
+            Song song = (Song) file;
+            updateStatsArtist(song);
+            updateGenre(song);
+            updateSongs(song);
+        }
     }
-    public void updateStatsAlbum(Album album){
-        if(bestAlbums.containsKey(album.getName())){
+    /**
+     * Updates statistics for a given album.
+     *
+     * @param album The album for which statistics are being updated.
+     */
+    public void updateStatsAlbum(final Album album) {
+        if (bestAlbums.containsKey(album.getName())) {
             int list = bestAlbums.get(album.getName());
             list++;
-            bestAlbums.put(album.getName(),list);
-        }
-        else {
-            bestAlbums.put(album.getName(),1);
+            bestAlbums.put(album.getName(), list);
+        } else {
+            bestAlbums.put(album.getName(), 1);
         }
     }
 
     @Override
-    public void addObserver(UserObserver observer) {
+    public void addObserver(final UserObserver observer) {
         if (!observers.contains(observer)) {
             observers.add(observer);
         }
     }
 
     @Override
-    public void removeObserver(UserObserver observer) {
+    public void removeObserver(final UserObserver observer) {
         observers.remove(observer);
     }
 
     @Override
-    public void notifyObservers(String message) {
+    public void notifyObservers(final String message) {
         for (UserObserver observer : observers) {
             observer.update(this, message);
         }

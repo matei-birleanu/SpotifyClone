@@ -1,8 +1,8 @@
 package app.pages;
 
 public class Notification {
-    String name;
-    String description;
+    private String name;
+    private String description;
 
     public Notification() {
     }
@@ -12,19 +12,23 @@ public class Notification {
         this.description = description;
     }
 
+    /**
+     * Retrieves the name associated with the object.
+     *
+     * @return The name of the object.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Retrieves the description associated with the object.
+     *
+     * @return The description of the object.
+     */
     public String getDescription() {
         return description;
     }
 
-    @Override
-    public String toString() {
-        return "Notification{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
+
 }

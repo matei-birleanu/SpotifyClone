@@ -55,7 +55,7 @@ public final class Main {
             String filepath = CheckerConstants.OUT_PATH + file.getName();
             File out = new File(filepath);
             boolean isCreated = out.createNewFile();
-            if (isCreated && (file.getName().contains("test07") || file.getName().contains("test08")) || file.getName().contains("test09")|| file.getName().contains("test12")|| file.getName().contains("test13") || file.getName().contains("test14") ||file.getName().contains("test00") ||file.getName().contains("test01")||file.getName().contains("test02")||file.getName().contains("test11")) {
+            if (isCreated) {
                 action(file.getName(), filepath);
             }
         }
@@ -88,7 +88,6 @@ public final class Main {
 
         for (CommandInput command : commands) {
             admin.updateTimestamp(command.getTimestamp());
-            //System.out.println(command.getTimestamp() + " din main " + command.getCommand());
             String commandName = command.getCommand();
 
             switch (commandName) {
@@ -141,11 +140,11 @@ public final class Main {
                 case "getNotifications" -> outputs.add(CommandRunner.getNotifications(command));
                 case "buyMerch" -> outputs.add(CommandRunner.buyMerch(command));
                 case "seeMerch" -> outputs.add(CommandRunner.seeMerch(command));
-                case "updateRecommendations" -> outputs.add(CommandRunner.updateRecommendations(command));
+                case "updateRecommendations" -> outputs.add(CommandRunner.
+                        updateRecommendations(command));
                 default -> System.out.println("Invalid command " + commandName);
             }
         }
-        System.out.println("da");
         outputs.add(CommandRunner.endProgram());
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), outputs);

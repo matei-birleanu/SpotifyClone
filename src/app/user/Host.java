@@ -103,19 +103,19 @@ public final class Host extends ContentCreator implements UserObservable {
     }
 
     @Override
-    public void addObserver(UserObserver observer) {
+    public void addObserver(final UserObserver observer) {
         if (!observers.contains(observer)) {
             observers.add(observer);
         }
     }
 
     @Override
-    public void removeObserver(UserObserver observer) {
+    public void removeObserver(final UserObserver observer) {
         observers.remove(observer);
     }
 
     @Override
-    public void notifyObservers(String message) {
+    public void notifyObservers(final String message) {
         for (UserObserver observer : observers) {
             observer.update(this, message);
         }

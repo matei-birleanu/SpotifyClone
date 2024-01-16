@@ -20,10 +20,10 @@ public final class Artist extends ContentCreator implements UserObservable {
     private ArrayList<Album> albums;
     private ArrayList<Merchandise> merch;
     private ArrayList<Event> events;
-    private HashMap <String, Integer> fans = new HashMap<>();
-    private HashMap <String, Integer> songListens = new HashMap<>();
+    private HashMap<String, Integer> fans = new HashMap<>();
+    private HashMap<String, Integer> songListens = new HashMap<>();
     @Getter
-    private HashMap<String,Integer> popularAlbums = new HashMap<>();
+    private HashMap<String, Integer> popularAlbums = new HashMap<>();
     @Getter
     @Setter
     private int sales;
@@ -33,7 +33,7 @@ public final class Artist extends ContentCreator implements UserObservable {
     @Getter
     @Setter
     private boolean played = false;
-     List<UserObserver> observers = new ArrayList<>();
+    private List<UserObserver> observers = new ArrayList<>();
 
     /**
      * Instantiates a new Artist.
@@ -50,19 +50,26 @@ public final class Artist extends ContentCreator implements UserObservable {
 
         super.setPage(new ArtistPage(this));
     }
-    public Merchandise getAMerch(String name){
-        for(Merchandise merch : merch){
-            if(merch.getName().equals(name)){
+    /**
+     * Retrieves merchandise based on its name.
+     *
+     * @param name The name of the merchandise to be retrieved.
+     * @return The Merchandise object with the specified name, or null if not found.
+     */
+    public Merchandise getAMerch(final String name) {
+        for (Merchandise merch : merch) {
+            if (merch.getName().equals(name)) {
                 return merch;
             }
         }
         return null;
     }
+
     public HashMap<String, Integer> getSongListens() {
         return songListens;
     }
 
-    public void setSongListens(HashMap<String, Integer> songListens) {
+    public void setSongListens(final HashMap<String, Integer> songListens) {
         this.songListens = songListens;
     }
 
@@ -70,7 +77,7 @@ public final class Artist extends ContentCreator implements UserObservable {
         return fans;
     }
 
-    public void setFans(HashMap<String, Integer> fans) {
+    public void setFans(final HashMap<String, Integer> fans) {
         this.fans = fans;
     }
 
@@ -158,49 +165,63 @@ public final class Artist extends ContentCreator implements UserObservable {
 
         return albumOutput;
     }
-    public void updateListens(String file, String fan){
-        if(fans.containsKey(fan)){
+    /**
+     * Updates the number of listens for a specific file by a fan.
+     *
+     * @param file The file (e.g., song or podcast) for which listens are being updated.
+     * @param fan The fan (user) who is updating the number of listens.
+     */
+    public void updateListens(final String file, final String fan) {
+        if (fans.containsKey(fan)) {
             Integer listens = fans.get(fan);
             listens++;
             fans.put(fan, listens);
-        }
-        else {
+        } else {
             fans.put(fan, 1);
         }
-        if(songListens.containsKey(file)){
+        if (songListens.containsKey(file)) {
             Integer listens = songListens.get(file);
             listens++;
-            songListens.put(file,listens);
-        }
-        else{
+            songListens.put(file, listens);
+        } else {
             songListens.put(file, 1);
         }
 
     }
-    public void putAlbumStats(Album album, User user){
-        if(popularAlbums.containsKey(album.getName())){
+    /**
+     * Updates or adds album statistics based on the provided album and user.
+     *
+     * @param album The album for which statistics are being updated.
+     * @param user The user whose album statistics are being considered.
+     */
+    public void putAlbumStats(final Album album, final User user) {
+        if (popularAlbums.containsKey(album.getName())) {
             int a = popularAlbums.get(album.getName());
             a = a + user.getBestAlbums().get(album.getName());
             popularAlbums.put(album.getName(), a);
-        }
-        else{
+        } else {
             //System.out.println("pibk " + user.getBestAlbums().get(album.getName()));
-            popularAlbums.put(album.getName(),user.getBestAlbums().get(album.getName()));
+            popularAlbums.put(album.getName(), user.getBestAlbums().get(album.getName()));
         }
     }
-    public void createAlbumStats(){
-        for(User usr : Admin.getInstance().getUsers()){
-           for(Map.Entry<String,Integer> entry : usr.getBestAlbums().entrySet()){
-               //System.out.println( "Artist "+entry.getKey() + " " + entry.getValue());
-               Album album = Admin.getInstance().getAlbum(entry.getKey());
-               if(album.getOwner().equals(getUsername())){
-                    putAlbumStats(album,usr);
-               }
-           }
+    /**
+     * Creates album statistics based on the best albums of users.
+     * Iterates through users and their best albums, updating statistics accordingly.
+     */
+    public void createAlbumStats() {
+        for (User usr : Admin.getInstance().getUsers()) {
+            for (Map.Entry<String, Integer> entry : usr.getBestAlbums().entrySet()) {
+                //System.out.println( "Artist "+entry.getKey() + " " + entry.getValue());
+                Album album = Admin.getInstance().getAlbum(entry.getKey());
+                if (album.getOwner().equals(getUsername())) {
+                    putAlbumStats(album, usr);
+                }
+            }
 
         }
 
     }
+
     /**
      * Get user type
      *
@@ -211,19 +232,19 @@ public final class Artist extends ContentCreator implements UserObservable {
     }
 
     @Override
-    public void addObserver(UserObserver observer) {
+    public void addObserver(final UserObserver observer) {
         if (!observers.contains(observer)) {
             observers.add(observer);
         }
     }
 
     @Override
-    public void removeObserver(UserObserver observer) {
+    public void removeObserver(final UserObserver observer) {
         observers.remove(observer);
     }
 
     @Override
-    public void notifyObservers(String message) {
+    public void notifyObservers(final String message) {
         for (UserObserver observer : observers) {
             observer.update(this, message);
         }

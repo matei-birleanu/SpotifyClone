@@ -2,7 +2,6 @@ package app.pages;
 
 import app.audio.Collections.Album;
 import app.user.Artist;
-import app.user.ContentCreator;
 import app.user.Event;
 import app.user.Merchandise;
 import lombok.Getter;
