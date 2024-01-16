@@ -7,6 +7,7 @@ import app.audio.Collections.Podcast;
 import app.audio.Files.AudioFile;
 import app.audio.Files.Episode;
 import app.audio.Files.Song;
+import app.pages.ArtistPage;
 import app.pages.Notification;
 import app.player.Player;
 import app.user.*;
@@ -295,7 +296,8 @@ final public class Admin {
         return deleteArtist((Artist) currentUser);
     }
 
-    public List<Map.Entry<String, Integer>> sortStats(final List<Map.Entry<String,Integer>> entryList) {
+    public List<Map.Entry<String, Integer>> sortStats(
+            final List<Map.Entry<String,Integer>> entryList) {
         Collections.sort(entryList, (entry1, entry2) -> {
             int valueComparison = entry2.getValue().compareTo(entry1.getValue());
 
@@ -830,7 +832,8 @@ final public class Admin {
         String nextPage = commandInput.getNextPage();
 
         UserAbstract currentUser = getAbstractUser(username);
-
+        User user1 = getUser(commandInput.getUsername());
+        user1.clearHistory();
         if (currentUser == null) {
             return "The username %s doesn't exist.".formatted(username);
         } else if (!currentUser.userType().equals("user")) {
@@ -841,10 +844,18 @@ final public class Admin {
         if (!user.isStatus()) {
             return "%s is offline.".formatted(user.getUsername());
         }
-
+        user1.addHistory(user1.getCurrentPage().display());
         switch (nextPage) {
             case "Home" -> user.setCurrentPage(user.getHomePage());
             case "LikedContent" -> user.setCurrentPage(user.getLikedContentPage());
+            case "Artist" -> {
+                String name = user1.getPlayer().getSource().getAudioFile()
+                        .getName();
+                String artistName = Admin.getInstance().getSong(name).getArtist();
+                Artist artist = Admin.getInstance().getArtist(artistName);
+                System.out.println(artistName);
+                user1.setCurrentPage(artist.getPage());
+            }
             default -> {
                 return "%s is trying to access a non-existent page.".formatted(username);
             }
@@ -1055,6 +1066,32 @@ final public class Admin {
      */
     public List<String> getTop5Songs() {
         List<Song> sortedSongs = new ArrayList<>(songs);
+        sortedSongs.sort(Comparator.comparingInt(Song::getLikes).reversed());
+        List<String> topSongs = new ArrayList<>();
+        int count = 0;
+        for (Song song : sortedSongs) {
+            if (count >= limit) {
+                break;
+            }
+            topSongs.add(song.getName());
+            count++;
+        }
+        return topSongs;
+    }
+    /**
+     * Updates the contents of a playlist with the provided list of song names.
+     *
+     * @param playlist The playlist to be updated.
+     * @param list     The list of song names to replace the existing contents of the playlist.
+     */
+    public void updatePlaylist(final Playlist playlist, final List<String> list) {
+        for (String str : list) {
+            Song song = getSong(str);
+            playlist.addSong(song);
+        }
+    }
+    public List<String> getTop5SongsUser(User user) {
+        List<Song> sortedSongs = new ArrayList<>(user.getLikedSongs());
         sortedSongs.sort(Comparator.comparingInt(Song::getLikes).reversed());
         List<String> topSongs = new ArrayList<>();
         int count = 0;

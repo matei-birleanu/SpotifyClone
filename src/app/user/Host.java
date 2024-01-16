@@ -1,7 +1,7 @@
 package app.user;
 
 import app.audio.Collections.Podcast;
-import app.pages.HostPage;
+import app.pages.PageFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public final class Host extends ContentCreator implements UserObservable {
         podcasts = new ArrayList<>();
         announcements = new ArrayList<>();
 
-        super.setPage(new HostPage(this));
+        super.setPage(PageFactory.createPage("host", this));
     }
 
     /**

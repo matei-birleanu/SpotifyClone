@@ -2,14 +2,12 @@
 # <Copyrigts> Bîrleanu Teodor Matei 324CA 2024
 
       In cele ce urmeaza voi prezenta noile functionalitati adaugate proiectului.
-      Ca desgign pattern am folosit un singleton pentru instanta de admin si observer pentru user. Am folosit
-    in implementarea temei solutia oficiala a etapei 2.
+      Ca desgign pattern am folosit un SINGLETON pentru instanta de admin , OBSERVER pentru user si Factory pattern
+    pentru sistemul de pagini. Am folosit in implementarea temei solutia oficiala a etapei 2.
       WRAPPED
         Pentru aceasta functiona am monitorizat tot ce se afla in playere-le userilor prin intermediului functiei
     simulateTime care simuleaza timpul trecut din punctul de veder al playerului pentru toti userii. Pentru fiecare
-    melodie ascultat am realizat statistici asa cum se cere(topSongs, topAlbums, topFans etc..). In cazul acestei
-    functii am folosit ChatGpt pentru afisarea acestei comenzi intrucat aveam mici diferente la output pe care mi
-    le a rezolvat.
+    melodie ascultat am realizat statistici asa cum se cere(topSongs, topAlbums, topFans etc..).
       NOTIFICATIONS
       Am creat o clasa speciala de notificari care retine notificare in sinefiecare user avand o lista de acest 
     tip pentru a pastra notificarile primite de a lungul rularii programului. De asemenea, la fiecare comanda

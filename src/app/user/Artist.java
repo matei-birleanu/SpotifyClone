@@ -9,7 +9,7 @@ import app.Admin;
 import app.audio.Collections.Album;
 import app.audio.Collections.AlbumOutput;
 import app.audio.Files.Song;
-import app.pages.ArtistPage;
+import app.pages.PageFactory;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,7 +48,7 @@ public final class Artist extends ContentCreator implements UserObservable {
         merch = new ArrayList<>();
         events = new ArrayList<>();
 
-        super.setPage(new ArtistPage(this));
+        super.setPage(PageFactory.createPage("artist", this));
     }
     /**
      * Retrieves merchandise based on its name.

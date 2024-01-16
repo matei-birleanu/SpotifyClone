@@ -94,7 +94,7 @@ public final class CommandRunner {
     public static ObjectNode load(final CommandInput commandInput) {
         User user = admin.getUser(commandInput.getUsername());
         String message = user.load();
-        if(user.getPlayer().getSource() != null) {
+        if (user.getPlayer().getSource() != null) {
             AudioFile file = user.getPlayer().getSource().getAudioFile();
             for (Song song : Admin.getInstance().getSongs()) {
                 if (file.getName().equals(song.getName())) {
@@ -793,6 +793,7 @@ public final class CommandRunner {
 
         return objectNode;
     }
+
     /**
      * Processes a wrapped command based on the provided command input.
      *
@@ -876,17 +877,18 @@ public final class CommandRunner {
         }
         return null;
     }
+
     /**
      * Adds top entries to the specified ObjectNode based on the provided entry list.
      *
      * @param resultNode The ObjectNode to which top entries will be added.
-     * @param nodeName The name of the node in the ObjectNode where entries will be added.
-     * @param entryList The list of Map entries containing key-value pairs.
+     * @param nodeName   The name of the node in the ObjectNode where entries will be added.
+     * @param entryList  The list of Map entries containing key-value pairs.
      */
     private static void addTopEntries(final ObjectNode resultNode,
                                       final String nodeName,
-                                      final List<Map.Entry<String
-            , Integer>> entryList) {
+                                      final List<Map.Entry<String,
+                                              Integer>> entryList) {
         ObjectNode node = resultNode.putObject(nodeName);
         int ok = 0;
         for (Map.Entry<String, Integer> entry : entryList) {
@@ -897,6 +899,7 @@ public final class CommandRunner {
             ok++;
         }
     }
+
     /**
      * Processes a subscription based on the provided command input.
      *
@@ -935,6 +938,7 @@ public final class CommandRunner {
                 + name + " successfully.");
         return objectNode;
     }
+
     /**
      * Retrieves user notifications based on the provided command input.
      *
@@ -959,6 +963,7 @@ public final class CommandRunner {
         user.clearNotifications();
         return objectNode;
     }
+
     /**
      * Processes a merchandise purchase based on the provided command input.
      *
@@ -994,6 +999,7 @@ public final class CommandRunner {
         return null;
 
     }
+
     /**
      * Retrieves information about merchandise based on the provided command input.
      *
@@ -1039,7 +1045,8 @@ public final class CommandRunner {
             objectNode.put("command", commandInput.getCommand());
             objectNode.put("user", commandInput.getUsername());
             objectNode.put("timestamp", commandInput.getTimestamp());
-            objectNode.put("message", "The recommendations for user " + user.getUsername() + " have been updated successfully.");
+            objectNode.put("message", "The recommendations for user "
+                    + user.getUsername() + " have been updated successfully.");
             return objectNode;
         }
         if (commandInput.getRecommendationType().equals("random_playlist")) {
@@ -1058,7 +1065,7 @@ public final class CommandRunner {
             List<Map.Entry<String, Integer>> topGen = new ArrayList<>(genreMap.entrySet());
             topGen = Admin.getInstance().sortStats(topGen);
             ArrayList<Song> top = new ArrayList<>();
-            if(!topGen.isEmpty()) {
+            if (!topGen.isEmpty()) {
                 top = Admin.getInstance().searchTopSongsGenre(topGen.get(0).getKey());
             }
             Playlist recomennded = new Playlist(user.getUsername()
@@ -1067,6 +1074,40 @@ public final class CommandRunner {
                 recomennded.addSong(sg);
             }
             user.addRecommnedePlaylist(recomennded);
+            ObjectNode objectNode = objectMapper.createObjectNode();
+            objectNode.put("command", commandInput.getCommand());
+            objectNode.put("user", commandInput.getUsername());
+            objectNode.put("timestamp", commandInput.getTimestamp());
+            objectNode.put("message", "The recommendations for user "
+                    + user.getUsername() + " have been updated successfully.");
+            return objectNode;
+        }
+        if (commandInput.getRecommendationType().equals("fans_playlist")) {
+            String name = user.getPlayer().getSource().getAudioFile()
+                    .getName();
+            Song song = Admin.getInstance().getSong(name);
+            String nameArtist = song.getArtist();
+            Artist artist = Admin.getInstance().getArtist(nameArtist);
+            Playlist playlist = new Playlist(nameArtist +
+                    " Fan Club recommendations",
+                    user.getUsername());
+            List<Map.Entry<String, Integer>> entryListFans = new ArrayList<>(
+                    artist.getFans().entrySet());
+            entryListFans = Admin.getInstance().sortStats(entryListFans);
+            ArrayList<String> topFansList = new ArrayList<>();
+            for(String str : topFansList){
+                User user1 = Admin.getInstance().getUser(str);
+                List<String> likedSongs = Admin.getInstance().getTop5SongsUser(user1);
+                Admin.getInstance().updatePlaylist(playlist,likedSongs);
+            }
+            int ok = 0;
+            for (Map.Entry<String, Integer> entry : entryListFans) {
+                if (ok == 5) {
+                    break;
+                }
+                topFansList.add(entry.getKey());
+            }
+            user.addRecommnedePlaylist(playlist);
             ObjectNode objectNode = objectMapper.createObjectNode();
             objectNode.put("command", commandInput.getCommand());
             objectNode.put("user", commandInput.getUsername());
@@ -1129,6 +1170,29 @@ public final class CommandRunner {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("command", "endProgram");
         objectNode.put("result", objectMapper.createObjectNode());
+        return objectNode;
+    }
+    /**
+     * Navigates to the previous page based on the provided command input.
+     *
+     * @param commandInput The input containing information for navigating to the previous page.
+     * @return An ObjectNode containing the result of navigating to the previous page.
+     */
+    public static ObjectNode previousPage(final CommandInput commandInput) {
+        User user = Admin.getInstance().getUser(commandInput.getUsername());
+        System.out.println(user.getPageHistory().toString());
+        int nr = user.getPageHistory().size() - 1;
+        String newPage = user.getPageHistory().get(nr);
+        System.out.println(newPage);
+        if (newPage.equals("likedcontent")) {
+            user.setCurrentPage(user.getLikedContentPage());
+        }
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", "previousPage");
+        objectNode.put("user", commandInput.getUsername());
+        objectNode.put("timestamp", commandInput.getTimestamp());
+        objectNode.put("message", "The user " + commandInput.getUsername()
+                + " has navigated successfully to the previous page.");
         return objectNode;
     }
 

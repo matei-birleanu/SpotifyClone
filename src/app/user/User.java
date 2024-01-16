@@ -7,10 +7,7 @@ import app.audio.Collections.PlaylistOutput;
 import app.audio.Files.AudioFile;
 import app.audio.Files.Song;
 import app.audio.LibraryEntry;
-import app.pages.HomePage;
-import app.pages.LikedContentPage;
-import app.pages.Notification;
-import app.pages.Page;
+import app.pages.*;
 import app.player.Player;
 import app.player.PlayerSource;
 import app.player.PlayerStats;
@@ -19,7 +16,7 @@ import app.searchBar.SearchBar;
 import app.utils.Enums;
 import lombok.Getter;
 import lombok.Setter;
-
+import app.pages.PageFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +69,9 @@ public final class User extends UserAbstract implements UserObservable {
     @Setter
     private List<Playlist> recommendedPlaylist = new ArrayList<>();
     private List<UserObserver> observers = new ArrayList<>();
+    @Getter
+    @Setter
+    private ArrayList<String> pageHistory = new ArrayList<>();
 
     /**
      * Instantiates a new User.
@@ -90,10 +90,19 @@ public final class User extends UserAbstract implements UserObservable {
         lastSearched = false;
         status = true;
 
-        homePage = new HomePage(this);
+        homePage = (HomePage) PageFactory.createPage("home", this);
         currentPage = homePage;
-        likedContentPage = new LikedContentPage(this);
+        likedContentPage = (LikedContentPage) PageFactory.createPage("liked", this);
     }
+
+    public void addHistory(final String name) {
+        pageHistory.add(name);
+    }
+
+    public void clearHistory() {
+        pageHistory.clear();
+    }
+
     /**
      * Adds a recommended playlist to the user's list of recommended playlists.
      *
@@ -102,6 +111,7 @@ public final class User extends UserAbstract implements UserObservable {
     public void addRecommnedePlaylist(final Playlist playlist) {
         recommendedPlaylist.add(playlist);
     }
+
     /**
      * Adds a playlist to the user's list of playlists.
      *
@@ -110,6 +120,7 @@ public final class User extends UserAbstract implements UserObservable {
     public void addPlaylist(final Playlist playlist) {
         playlists.add(playlist);
     }
+
     /**
      * Adds a recommended song to the user's list of recommended songs.
      *
@@ -118,6 +129,7 @@ public final class User extends UserAbstract implements UserObservable {
     public void addRecommendedSong(final Song song) {
         recommendedSong.add(song);
     }
+
     /**
      * Adds merchandise to the user's list of owned merchandise.
      *
@@ -126,6 +138,7 @@ public final class User extends UserAbstract implements UserObservable {
     public void addMerch(final String name) {
         merch.add(name);
     }
+
     /**
      * Adds a notification to the user's notification list.
      *
@@ -134,6 +147,7 @@ public final class User extends UserAbstract implements UserObservable {
     public void addNotification(final Notification notification) {
         notificationList.add(notification);
     }
+
     /**
      * Clears all notifications from the user's notification list.
      */
@@ -666,6 +680,7 @@ public final class User extends UserAbstract implements UserObservable {
 
         player.simulatePlayer(time);
     }
+
     /**
      * Updates statistics for the artist associated with a given song.
      *
@@ -680,6 +695,7 @@ public final class User extends UserAbstract implements UserObservable {
             bestArtists.put(song.getArtist(), 1);
         }
     }
+
     /**
      * Updates the genre information for a given song.
      *
@@ -694,6 +710,7 @@ public final class User extends UserAbstract implements UserObservable {
             bestGenre.put(song.getGenre(), 1);
         }
     }
+
     /**
      * Updates information for a given song.
      *
@@ -708,6 +725,7 @@ public final class User extends UserAbstract implements UserObservable {
             bestSongs.put(song.getName(), 1);
         }
     }
+
     /**
      * Updates information for a given song.
      *
@@ -722,6 +740,7 @@ public final class User extends UserAbstract implements UserObservable {
             updateSongs(song);
         }
     }
+
     /**
      * Updates statistics for a given album.
      *

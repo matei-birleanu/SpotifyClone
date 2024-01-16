@@ -1,6 +1,5 @@
 package app.pages;
 
-import app.user.ContentCreator;
 
 /**
  * The interface Page.
