@@ -1,20 +1,27 @@
 # Proiect GlobalWaves  - Etapa 3
+# <Copyrigts> Bîrleanu Teodor Matei 324CA 2024
 
-<div align="center"><img src="https://tenor.com/view/listening-to-music-spongebob-gif-8009182.gif" width="300px"></div>
+      In cele ce urmeaza voi prezenta noile functionalitati adaugate proiectului.
+      Ca desgign pattern am folosit un singleton pentru instanta de admin si observer pentru user. Am folosit
+    in implementarea temei solutia oficiala a etapei 2.
+      WRAPPED
+        Pentru aceasta functiona am monitorizat tot ce se afla in playere-le userilor prin intermediului functiei
+    simulateTime care simuleaza timpul trecut din punctul de veder al playerului pentru toti userii. Pentru fiecare
+    melodie ascultat am realizat statistici asa cum se cere(topSongs, topAlbums, topFans etc..). In cazul acestei
+    functii am folosit ChatGpt pentru afisarea acestei comenzi intrucat aveam mici diferente la output pe care mi
+    le a rezolvat.
+      NOTIFICATIONS
+      Am creat o clasa speciala de notificari care retine notificare in sinefiecare user avand o lista de acest 
+    tip pentru a pastra notificarile primite de a lungul rularii programului. De asemenea, la fiecare comanda
+    la care se primeste notificare am adaugat in lista de notif a userilor care urmaresc artistul/hostul actiunea
+    pe care acesta a facut o. In cadrul acestei parti a proiectului, am realizat si actiunea de SUBSCRIBE, fiecare
+    user avand o lista de "ContentCreators" la care este abonat. Pentru comanda GETNOTIFICATIONS,am realizat afisarea
+    listei de notificari a fiecarui user dupa care golirea acesteia.
+      RECOMMANDATIONS
+      Pentru aceasta functie am realizat liste pentru fiecare user care contine recomandarile acestuia folosite si la
+    printarea paginii pe care se aflata acesta. Pentru random_playlist am folosit comanda de Random din java pe lista
+    contruita conform cerintei iar la cea din random_playlist am facut de asemenea cautarile conform filtrelor impuse.
+    
+    
+      
 
-#### Assignment Link: [https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/proiect/etapa1](https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/proiect/etapa3)
-
-
-## Skel Structure
-
-* src/
-  * checker/ - checker files
-  * fileio/ - contains classes used to read data from the json files
-  * main/
-      * Main - the Main class runs the checker on your implementation. Add the entry point to your implementation in it. Run Main to test your implementation from the IDE or from command line.
-      * Test - run the main method from Test class with the name of the input file from the command line and the result will be written
-        to the out.txt file. Thus, you can compare this result with ref.
-* input/ - contains the tests and library in JSON format
-* ref/ - contains all reference output for the tests in JSON format
-
-<div align="center"><img src="https://tenor.com/view/homework-time-gif-24854817.gif" width="500px"></div>

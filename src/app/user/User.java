@@ -58,6 +58,8 @@ public final class User extends UserAbstract implements UserObservable {
     @Getter
     private HashMap<String,Integer> bestAlbums = new HashMap<>();
     @Getter
+    private HashMap<String,Integer> bestEpisodes = new HashMap<>();
+    @Getter
     private ArrayList<String> subscribeList = new ArrayList<>();
     @Getter
     private ArrayList<Notification> notificationList = new ArrayList<>();
@@ -94,6 +96,9 @@ public final class User extends UserAbstract implements UserObservable {
     }
     public void addRecommnedePlaylist(Playlist playlist){
         recommendedPlaylist.add(playlist);
+    }
+    public void addPlaylist(Playlist playlist){
+        playlists.add(playlist);
     }
     public void addRecommendedSong(Song song){
         recommendedSong.add(song);

@@ -55,7 +55,7 @@ public final class Player {
         paused = true;
         source = null;
         shuffle = false;
-        System.out.println("stop");
+        //System.out.println("stop");
     }
 
     private void bookmarkPodcast() {
@@ -190,20 +190,60 @@ public final class Player {
         int elapsedTime = time;
         if (!paused) {
             while (elapsedTime >= source.getDuration()) {
-                if(Admin.getInstance().getSong(source.getAudioFile().getName()).getDuration() == source.getDuration())
-                    System.out.println(source.getAudioFile().getName() + " din sim " + elapsedTime + " " + source.getRemainedDuration() + " " + source.getDuration());
+                if(Admin.getInstance().getSong(source.getAudioFile().getName()).getDuration() == source.getDuration()) {
+                    //System.out.println(source.getAudioFile().getName() + " din sim " + elapsedTime + " " + source.getRemainedDuration() + " " + source.getDuration());
+                    User user = Admin.getInstance().getUser(ownerPlayer);
+                    if (type.equals("album")) {
+                        String name = getArtist(source.getAudioFile().getName());
+                        Artist artist = Admin.getInstance().getArtist(name);
+                        user.updateStatsSong(source.getAudioFile());
+                        //System.out.println("am inreg pt din album1" + source.getAudioFile().getName());
+                        Album album = Admin.getInstance().getAlbum(source.getAudioCollection().getName());
+                        user.updateStatsAlbum(album);
+                        artist.updateListens(source.getAudioFile().getName(), user.getUsername());
+                    }
+                    if (type.equals("song")) {
+                        //System.out.println(source.getRemainedDuration());
+                        Song song = Admin.getInstance().getSong(source.getAudioFile().getName());
+                        Album album = Admin.getInstance().getAlbum(song.getAlbum());
+                        user.updateStatsSong(song);
+                        //System.out.println("am inreg pt din song1" + song.getName());
+                        user.updateStatsAlbum(album);
+                        Artist artist = Admin.getInstance().getArtist(song.getArtist());
+                        artist.updateListens(source.getAudioFile().getName(), user.getUsername());
+                    }
+                }
                 elapsedTime -= source.getDuration();
                 next();
                 if (paused) {
                     break;
                 }
                 if(elapsedTime < source.getDuration()){
-                    System.out.println(source.getAudioFile().getName() + "rar");
+                    User user = Admin.getInstance().getUser(ownerPlayer);
+                    //System.out.println(source.getAudioFile().getName() + "rar");
+                    //System.out.println(source.getRemainedDuration());
+                    Song song = Admin.getInstance().getSong(source.getAudioFile().getName());
+                    Album album = Admin.getInstance().getAlbum(song.getAlbum());
+                    user.updateStatsSong(song);
+                    //System.out.println("am inreg pt din song1" + song.getName());
+                    user.updateStatsAlbum(album);
+                    Artist artist = Admin.getInstance().getArtist(song.getArtist());
+                    artist.updateListens(source.getAudioFile().getName(), user.getUsername());
                     //System.out.println("melodia din primul load " + source.getAudioFile().getName() + " " + elapsedTime + " " + source.getDuration());
                 }
             }
             if(source != null && type.equals("song")) {
-                System.out.println(source.getAudioFile().getName() + " din afara " + elapsedTime+ " " + source.getRemainedDuration() + " " + source.getDuration());
+                User user = Admin.getInstance().getUser(ownerPlayer);
+                //System.out.println(source.getAudioFile().getName() + "rar");
+                //System.out.println(source.getRemainedDuration());
+                Song song = Admin.getInstance().getSong(source.getAudioFile().getName());
+                Album album = Admin.getInstance().getAlbum(song.getAlbum());
+                user.updateStatsSong(song);
+                //System.out.println("am inreg pt din song1" + song.getName());
+                user.updateStatsAlbum(album);
+                Artist artist = Admin.getInstance().getArtist(song.getArtist());
+                artist.updateListens(source.getAudioFile().getName(), user.getUsername());
+                //System.out.println(source.getAudioFile().getName() + " din afara " + elapsedTime+ " " + source.getRemainedDuration() + " " + source.getDuration());
             }
             if (!paused) {
                 source.skip(-elapsedTime);

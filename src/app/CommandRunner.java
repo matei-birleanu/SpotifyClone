@@ -16,7 +16,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.input.CommandInput;
 import org.checkerframework.checker.units.qual.A;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import javax.xml.transform.Source;
 import java.lang.reflect.Array;
 import java.util.*;
@@ -818,39 +820,84 @@ public final class CommandRunner {
     }
 
     public static ObjectNode wrapped(final CommandInput commandInput) {
-        //System.out.println(commandInput.getTimestamp());
-        //Admin.getInstance().updateTimestamp(commandInput.getTimestamp());
         User user = Admin.getInstance().getUser(commandInput.getUsername());
-//        if(user == null){
-//            Artist artist = Admin.getInstance().getArtist(commandInput.getUsername());
-//            for(Map.Entry<String,Integer> entry : artist.getFans().entrySet()){
-//                //System.out.println(entry.getKey() + " " + entry.getValue());
-//            }
-//            artist.createAlbumStats();
-//            System.out.println("ARTIST");
-//            for(Map.Entry<String,Integer> entry : artist.getPopularAlbums().entrySet()){
-//                System.out.println(entry.getKey() + " " + entry.getValue());
-//            }
-//        }
-        if (user != null) {
-            System.out.println(user.getUsername());
-            for (Map.Entry<String, Integer> entry : user.getBestAlbums().entrySet()) {
-                //System.out.println(entry.getKey() + " " + entry.getValue());
+        if(user == null){
+            Artist artist = Admin.getInstance().getArtist(commandInput.getUsername());
+            artist.createAlbumStats();
+            List<Map.Entry<String, Integer>> entryListAlbum = new ArrayList<>(artist.getPopularAlbums().entrySet());
+            entryListAlbum = Admin.getInstance().sortStats(entryListAlbum);
+
+            List<Map.Entry<String, Integer>> entryListSong = new ArrayList<>(artist.getSongListens().entrySet());
+            entryListSong = Admin.getInstance().sortStats(entryListSong);
+
+            List<Map.Entry<String, Integer>> entryListFans = new ArrayList<>(artist.getFans().entrySet());
+            entryListFans = Admin.getInstance().sortStats(entryListFans);
+            ArrayList<String> topFansList = new ArrayList<>();
+            int ok = 0;
+            for (Map.Entry<String, Integer> entry : entryListFans){
+                if(ok == 5){
+                    break;
+                }
+                topFansList.add(entry.getKey());
             }
-            for (Map.Entry<String, Integer> entry : user.getBestArtists().entrySet()) {
-                ///System.out.println(entry.getKey() + " " + entry.getValue());
+            ObjectNode objectNode = objectMapper.createObjectNode();
+            objectNode.put("command", commandInput.getCommand());
+            objectNode.put("user", commandInput.getUsername());
+            objectNode.put("timestamp", commandInput.getTimestamp());
+            objectNode.put("result", commandInput.getTimestamp());
+            ObjectNode resultNode = objectNode.putObject("result");
+
+            addTopEntries(resultNode, "topAlbums", entryListAlbum);
+            addTopEntries(resultNode, "topSongs", entryListSong);
+            ArrayNode topFansNode = resultNode.putArray("topFans");
+            for (String fan : topFansList) {
+                topFansNode.add(fan);
             }
-            List<Map.Entry<String, Integer>> entryList = new ArrayList<>(user.getBestSongs().entrySet());
-            for (Map.Entry<String, Integer> entry : user.getBestSongs().entrySet()) {
-                System.out.println(entry.getKey() + " " + entry.getValue());
-            }
+            resultNode.put("listeners", entryListFans.size());
+            return objectNode;
         }
+        if (user != null) {
+            List<Map.Entry<String, Integer>> entryList = new ArrayList<>(user.getBestSongs().entrySet());
+            entryList = Admin.getInstance().sortStats(entryList);
 
-        ObjectNode objectNode = objectMapper.createObjectNode();
-        objectNode.put("command", commandInput.getCommand());
-        objectNode.put("timestamp", commandInput.getTimestamp());
+            List<Map.Entry<String, Integer>> entryListGenre = new ArrayList<>(user.getBestGenre().entrySet());
+            entryListGenre = Admin.getInstance().sortStats(entryListGenre);
 
-        return objectNode;
+            List<Map.Entry<String, Integer>> entryListArtist = new ArrayList<>(user.getBestArtists().entrySet());
+            entryListArtist = Admin.getInstance().sortStats(entryListArtist);
+
+            List<Map.Entry<String, Integer>> entryListAlbum = new ArrayList<>(user.getBestAlbums().entrySet());
+            entryListAlbum = Admin.getInstance().sortStats(entryListAlbum);
+
+            List<Map.Entry<String, Integer>> entryListEpisode = new ArrayList<>(user.getBestEpisodes().entrySet());
+            entryListEpisode = Admin.getInstance().sortStats(entryListEpisode);
+
+            ObjectNode objectNode = objectMapper.createObjectNode();
+            objectNode.put("command", commandInput.getCommand());
+            objectNode.put("user", commandInput.getUsername());
+            objectNode.put("timestamp", commandInput.getTimestamp());
+            objectNode.put("result", commandInput.getTimestamp());
+            ObjectNode resultNode = objectNode.putObject("result");
+            addTopEntries(resultNode, "topArtists", entryListArtist);
+            addTopEntries(resultNode, "topGenres", entryListGenre);
+            addTopEntries(resultNode, "topSongs", entryList);
+            addTopEntries(resultNode, "topAlbums", entryListAlbum);
+            addTopEntries(resultNode, "topEpisodes", entryListEpisode);
+            return objectNode;
+        }
+        return null;
+    }
+
+    private static void addTopEntries(ObjectNode resultNode, String nodeName, List<Map.Entry<String, Integer>> entryList) {
+        ObjectNode node = resultNode.putObject(nodeName);
+        int ok = 0;
+        for (Map.Entry<String, Integer> entry : entryList) {
+            if(ok == 5) {
+                break;
+            }
+            node.put(entry.getKey(), entry.getValue());
+            ok++;
+        }
     }
 
     public static ObjectNode subscribe(final CommandInput commandInput) {
@@ -959,7 +1006,6 @@ public final class CommandRunner {
             Random random = new Random(seed);
             int randomIndex = random.nextInt(songArrayList.size());
             Song song1 = songArrayList.get(randomIndex);
-            ///System.out.println(song1.getName()+ " nume");
             user.addRecommendedSong(song1);
             ObjectNode objectNode = objectMapper.createObjectNode();
             objectNode.put("command", commandInput.getCommand());
@@ -981,7 +1027,15 @@ public final class CommandRunner {
                     genreMap = Admin.getInstance().updateHashMap(song, genreMap);
                 }
             }
+            List<Map.Entry<String, Integer>> topGen = new ArrayList<>(genreMap.entrySet());
+            topGen = Admin.getInstance().sortStats(topGen);
+            System.out.println(topGen.size());
+            ArrayList<Song> top = new ArrayList<>();
+            top = Admin.getInstance().searchTopSongsGenre(topGen.get(0).getKey());
             Playlist recomennded = new Playlist(user.getUsername() + "'s recommendations", user.getUsername());
+            for(Song sg : top){
+                recomennded.addSong(sg);
+            }
             user.addRecommnedePlaylist(recomennded);
             ObjectNode objectNode = objectMapper.createObjectNode();
             objectNode.put("command", commandInput.getCommand());

@@ -284,6 +284,7 @@ public  class Admin {
         }
 
         if (currentUser.userType().equals("user")) {
+            User user = Admin.getInstance().getUser(username);
             return deleteNormalUser((User) currentUser);
         }
 
@@ -293,7 +294,20 @@ public  class Admin {
 
         return deleteArtist((Artist) currentUser);
     }
+    public  List<Map.Entry<String, Integer>> sortStats( List<Map.Entry<String, Integer>> entryList){
+        Collections.sort(entryList, (entry1, entry2) -> {
+            int valueComparison = entry2.getValue().compareTo(entry1.getValue());
 
+            if (valueComparison != 0) {
+                // If values are different, sort by values in descending order
+                return valueComparison;
+            } else {
+                // If values are equal, sort alphabetically by key
+                return entry1.getKey().compareTo(entry2.getKey());
+            }
+        });
+        return entryList;
+    }
     private String deleteNormalUser(final User user) {
         if (user.getPlaylists().stream().anyMatch(playlist -> users.stream().map(User::getPlayer)
                 .filter(player -> player != user.getPlayer())
@@ -810,6 +824,15 @@ public  class Admin {
         }
 
         return user.getCurrentPage().printCurrentPage();
+    }
+    public ArrayList<Song> searchTopSongsGenre(String genre){
+        ArrayList<Song> top = new ArrayList<>();
+        for(Song sg : songs){
+            if(sg.getGenre().equals(genre)){
+                top.add(sg);
+            }
+        }
+        return top;
     }
     public HashMap<String,Integer> updateHashMap(Song song, HashMap<String,Integer> hashMap){
         if(hashMap.containsKey(song.getGenre())){
